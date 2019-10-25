@@ -24,41 +24,73 @@ interface MethodProps {
 	deleteUser: (id: string) => any;
 }
 
+enum Sort {
+	asc,
+	desc,
+	unsorted
+}
+
 const UsersComponent = (props: Props & MethodProps) => {
 	React.useEffect(() => {
 		props.updateUsers();
 	}, []);
 
+	const [sortState, setSortState] = React.useState<Sort>(Sort.unsorted);
+
 	const [currentUser, setCurrentUser] = React.useState<number | null>(null);
 
+	const compare = (a: User, b: User) => {
+		const genreA = a.name.toUpperCase();
+		const genreB = b.name.toUpperCase();
+
+		let comparison = 0;
+		if (genreA > genreB) {
+			comparison = 1;
+		} else if (genreA < genreB) {
+			comparison = -1;
+		}
+
+		return comparison;
+	};
+
 	const renderUsers = () => {
-		return props.users.map(u => {
-			return (
-				<Tr key={u.id}>
-					<Td>{u.id}</Td>
-					<Td>{u.name}</Td>
-					<Td>{u.username}</Td>
-					<Td>{u.email}</Td>
-					<Td>{u.address.city}</Td>
-					<Td>
-						<Link to={`/edit/${u.id}`}>
-							<Button variant="success" small={true}>
-								Edit
+		return props.users
+			.sort((a, b) => {
+				if (sortState === Sort.desc) {
+					return compare(a, b);
+				}
+				if (sortState === Sort.asc) {
+					return compare(b, a);
+				}
+				return 0;
+			})
+			.map(u => {
+				return (
+					<Tr key={u.id}>
+						<Td>{u.id}</Td>
+						<Td>{u.name}</Td>
+						<Td>{u.username}</Td>
+						<Td>{u.email}</Td>
+						<Td>{u.address.city}</Td>
+						<Td>
+							<Link to={`/edit/${u.id}`}>
+								<Button variant="success" small={true}>
+									Edit
+								</Button>
+							</Link>
+						</Td>
+						<Td>
+							<Button
+								onClick={() => setCurrentUser(u.id)}
+								variant="error"
+								small={true}
+							>
+								Delete
 							</Button>
-						</Link>
-					</Td>
-					<Td>
-						<Button
-							onClick={() => setCurrentUser(u.id)}
-							variant="error"
-							small={true}
-						>
-							Delete
-						</Button>
-					</Td>
-				</Tr>
-			);
-		});
+						</Td>
+					</Tr>
+				);
+			});
 	};
 
 	const deleteUserMethod = () => {
@@ -67,6 +99,15 @@ const UsersComponent = (props: Props & MethodProps) => {
 		}
 		props.deleteUser(String(currentUser));
 		setCurrentUser(null);
+	};
+
+	const sortMethod = () => {
+		if (sortState === Sort.unsorted || sortState === Sort.asc) {
+			setSortState(Sort.desc);
+		} else {
+			setSortState(Sort.asc);
+		}
+		renderUsers();
 	};
 
 	return (
@@ -99,7 +140,7 @@ const UsersComponent = (props: Props & MethodProps) => {
 				<THead>
 					<Tr>
 						<Td>Id</Td>
-						<Td>Name</Td>
+						<Td clickable={true} onClick={() => sortMethod()}>Name</Td>
 						<Td>Username</Td>
 						<Td>Email</Td>
 						<Td>City</Td>

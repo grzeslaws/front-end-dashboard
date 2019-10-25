@@ -80,7 +80,7 @@ export const deleteUser = (id: string) => (
 export const addUser = (name: string, email: string, redirect: () => any) => (
 	dispatch: Dispatch<FetchUsersAction | UpdateUsersAction>
 ) => {
-	API.post(endpoints.addUser, {name, email})
+	API.post(endpoints.getUsers, {name, email})
 		.then(() => {
 			updateUsers()(dispatch);
 			redirect();

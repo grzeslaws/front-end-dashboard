@@ -10,13 +10,14 @@ export const Table = styled.table`
 	border: ${p => p.theme.colors.grayLight};
 `;
 
-export const Td = styled.td`
+export const Td = styled<{clickable?: boolean}, "td">("td")`
 	border: ${p => p.theme.colors.grayLight};
 	padding: ${p =>
 		p.theme.spacing.default(1.5) + " " + p.theme.spacing.default(2)};
 	font-size: ${p => p.theme.fonts.sizeBase};
 	color: ${p => p.theme.colors.gray(0.7)};
 	transition: ${p => p.theme.transitions.default};
+	cursor: ${p => p.clickable ? "pointer" : "default"};
 `;
 
 export const Tr = styled.tr`

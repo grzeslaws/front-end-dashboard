@@ -13,8 +13,6 @@ export const WrapperButtons = styled<{ center?: boolean }, "div">("div")`
 	justify-content: ${p => (p.center ? "center" : "flex-end")};
 `;
 
-// modal
-
 export const WrapperModal = styled.div`
 	position: fixed;
 	left: 0;
